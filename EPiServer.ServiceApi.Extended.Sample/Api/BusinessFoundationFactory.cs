@@ -39,6 +39,7 @@ namespace EPiServer.ServiceApi.Extended.Sample.Api
             {
                 return null;
             }
+
             var metaType = metaField.GetMetaType();
             return IsElementaryType(metaType.McDataType) ? PropertyValueUtil.ConvertToObject(metaField, value) : null;
         }
@@ -60,10 +61,10 @@ namespace EPiServer.ServiceApi.Extended.Sample.Api
             {
                 return enumSingleValue.Name;
             }
+
             return !(value is MetaEnumItem[] enumMultiValue)
                 ? null
                 : string.Join("|", enumMultiValue.Select(item => item.Name));
-
         }
 
         public static DateTime ParseToUtc(string stringValue)
@@ -115,11 +116,13 @@ namespace EPiServer.ServiceApi.Extended.Sample.Api
                                 {
                                     continue;
                                 }
+
                                 var newId = MetaEnum.AddItem(metaType, val, 0);
                                 if (newId <= 0 || newId > metaItems.Length - 1)
                                 {
                                     continue;
                                 }
+
                                 item = MetaEnum.GetItems(metaType).FirstOrDefault(x => x.Handle == newId);
                                 if (item != null)
                                 {
@@ -132,6 +135,7 @@ namespace EPiServer.ServiceApi.Extended.Sample.Api
                         {
                             value = dicFieldValues.ToArray();
                         }
+
                         break;
                     default:
                         value = ParseSimpleMetaFieldValue(mf, data);

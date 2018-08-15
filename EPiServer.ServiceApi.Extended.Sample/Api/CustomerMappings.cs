@@ -15,7 +15,10 @@ namespace EPiServer.ServiceApi.Extended.Sample.Api
     {
         public static ContactModelExtended ConvertToContactModel(this CustomerContact customerContact)
         {
-            if (customerContact == null) return null;
+            if (customerContact == null)
+            {
+                return null;
+            }
 
             return new ContactModelExtended
             {
@@ -70,9 +73,13 @@ namespace EPiServer.ServiceApi.Extended.Sample.Api
             customerContact.RegistrationSource = contactModel.RegistrationSource;
 
             if (contactModel.Addresses != null)
+            {
                 foreach (var address in contactModel.Addresses)
+                {
                     customerContact.AddContactAddress(
                         address.ConvertToCustomerAddress(CustomerAddress.CreateInstance()));
+                }
+            }
 
             UpdateMetaFields(customerContact, contactModel,
                 new List<string> {"FirstName", "LastName", "Email", "RegistrationSource"});
@@ -100,14 +107,21 @@ namespace EPiServer.ServiceApi.Extended.Sample.Api
             var customerAddress = GetAddress(contact, addressModel.AddressId);
             var isNew = customerAddress == null;
             IEnumerable<PrimaryKeyId> existingId = contact.ContactAddresses.Select(a => a.AddressId).ToList();
-            if (isNew) customerAddress = CustomerAddress.CreateInstance();
+            if (isNew)
+            {
+                customerAddress = CustomerAddress.CreateInstance();
+            }
 
             customerAddress = addressModel.ConvertToCustomerAddress(customerAddress);
 
             if (isNew)
+            {
                 contact.AddContactAddress(customerAddress);
+            }
             else
+            {
                 contact.UpdateContactAddress(customerAddress);
+            }
 
             contact.SaveChanges();
             if (isNew)
@@ -127,14 +141,25 @@ namespace EPiServer.ServiceApi.Extended.Sample.Api
             var metaFields = new List<ExtendedMetaFieldProperty>();
             var metaClass = DataContext.Current.MetaModel.MetaClasses.Cast<MetaClass>()
                 .FirstOrDefault(x => x.Name.Equals(entity.MetaClassName));
-            if (metaClass == null) return metaFields;
+            if (metaClass == null)
+            {
+                return metaFields;
+            }
+
             foreach (var property in entity.Properties.Where(x => !ignoreFields.Contains(x.Name)))
             {
                 var metaField = metaClass.Fields.Cast<MetaField>().FirstOrDefault(x => x.Name.Equals(property.Name));
-                if (metaField == null) continue;
+                if (metaField == null)
+                {
+                    continue;
+                }
 
                 var value = BusinessFoundationFactory.GetMetaFieldSerializationValue(metaField, property.Value);
-                if (value == null) continue;
+                if (value == null)
+                {
+                    continue;
+                }
+
                 metaFields.Add(new ExtendedMetaFieldProperty
                 {
                     Name = property.Name,
@@ -151,17 +176,29 @@ namespace EPiServer.ServiceApi.Extended.Sample.Api
         {
             var metaClass = DataContext.Current.MetaModel.MetaClasses.Cast<MetaClass>()
                 .FirstOrDefault(x => x.Name.Equals(entity.MetaClassName));
-            if (metaClass == null) return;
+            if (metaClass == null)
+            {
+                return;
+            }
             foreach (var property in entity.Properties.Where(x => !ignoreFields.Contains(x.Name)))
             {
                 var metaField = metaClass.Fields.Cast<MetaField>().FirstOrDefault(x => x.Name.Equals(property.Name));
-                if (metaField == null) continue;
+                if (metaField == null)
+                {
+                    continue;
+                }
 
                 var modelProperty = model.MetaFields.FirstOrDefault(x => x.Name.Equals(property.Name));
-                if (modelProperty == null || modelProperty.Values == null) continue;
+                if (modelProperty?.Values == null)
+                {
+                    continue;
+                }
 
                 var value = BusinessFoundationFactory.GetMetaFieldValue(metaField, modelProperty.Values);
-                if (value == null) continue;
+                if (value == null)
+                {
+                    continue;
+                }
 
                 property.Value = value;
             }

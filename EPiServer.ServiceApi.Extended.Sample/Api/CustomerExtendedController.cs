@@ -124,7 +124,9 @@ namespace EPiServer.ServiceApi.Extended.Sample.Api
                     CustomerMappings.CreateOrUpdateCustomerAddress(existingContact, address);
                 }
             }
-            existingContact.UpdateMetaFields(model, new List<string> {"FirstName", "LastName", "Email", "RegistrationSource"});
+
+            existingContact.UpdateMetaFields(model,
+                new List<string> {"FirstName", "LastName", "Email", "RegistrationSource"});
             existingContact.SaveChanges();
 
             return StatusCode(HttpStatusCode.NoContent);
